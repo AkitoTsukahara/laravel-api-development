@@ -1,0 +1,39 @@
+version: "3.8"
+volumes:
+  php-fpm-socket:
+  db-store:
+services:
+  app:
+    container_name: laravel_app
+    build: ./infra/docker/php
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  web:
+    container_name: laravel_web
+    build: ./infra/docker/nginx
+    ports:
+      - 80:80
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./backend:/work/backend
+
+  db:
+    container_name: laravel_db
+    build: ./infra/docker/mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - db-store:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laravel_admin
+    ports:
+      - 6565:80
+    environment:
+      PMA_ARBIRTRARY: 1
+      PMA_HOST: db:3306
+      PMA_USER: root
+      PMA_PASSWORD: password
