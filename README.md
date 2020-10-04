@@ -1,61 +1,38 @@
-# docker-laravel 🐳
+# laravel-template
+Laravel開発環境をサクッと構築できます！
 
-![License](https://img.shields.io/github/license/ucan-lab/docker-laravel?color=f05340)
-![Stars](https://img.shields.io/github/stars/ucan-lab/docker-laravel?color=f05340)
-![Issues](https://img.shields.io/github/issues/ucan-lab/docker-laravel?color=f05340)
-![Forks](https://img.shields.io/github/forks/ucan-lab/docker-laravel?color=f05340)
 
-## Introduction
+# 始め方
+1.このリポジトリをクローンもしくはダウンロードしてください。
 
-Build a simple laravel development environment with docker-compose.
-
-## Usage
-
-```bash
-$ git clone git@github.com:ucan-lab/docker-laravel.git
-$ cd docker-laravel
-$ make create-project # Install the latest Laravel project
-$ make install-recommend-packages # Not required
+2.`php-sandbox`ディレクトリで以下のコマンドを入力してください。
+  ```
+$ docker-compose up -d
+  ```
+  
+3.以下のコマンドでphpコンテナに入ります。
+```
+$ docker-compose exec php bash
 ```
 
-http://127.0.0.1
-
-Read this [Makefile](https://github.com/ucan-lab/docker-laravel/blob/master/Makefile).
-
-## Tips
-
-Read this [Wiki](https://github.com/ucan-lab/docker-laravel/wiki).
-
-## Container structure
-
-```bash
-├── app
-├── web
-└── db
+4.laravelのプロジェクトを立ち上げましょう！
+```
+# バージョンを指定しない場合
+$ composer create-project --prefer-dist laravel/laravel ./
+# バージョンを指定する場合
+$ composer create-project --prefer-dist laravel/laravel=5.8 ./
 ```
 
-### app container
+5.`http://localhost/`でLaravelのウェルカムページが表示されたら成功です!
 
-- Base image
-  - [php](https://hub.docker.com/_/php):7.4-fpm-buster
-  - [composer](https://hub.docker.com/_/composer):1.10
-
-### web container
-
-- Base image
-  - [nginx](https://hub.docker.com/_/nginx):1.18-alpine
-  - [node](https://hub.docker.com/_/node):14.2-alpine
-
-### db container
-
-- Base image
-  - [mysql](https://hub.docker.com/_/mysql):8.0
-
-#### Persistent MySQL Storage
-
-By default, the [named volume](https://docs.docker.com/compose/compose-file/#volumes) is mounted, so MySQL data remains even if the container is destroyed.
-If you want to delete MySQL data intentionally, execute the following command.
-
-```bash
-$ docker-compose down -v && docker-compose up
+止めたい時は以下のコマンドを入力してください。
 ```
+$  docker stop $(docker ps -q) 
+```
+---
+
+もし、`composer-setup.php`で失敗したら以下のURLページを参照し、
+`Dockerfile`中の`composer-setup.php`のハッシュ値を差し替えてください。
+https://getcomposer.org/download/
+
+---
