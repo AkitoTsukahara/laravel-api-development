@@ -11,8 +11,8 @@ class ContactsController extends Controller
         $data = request()->validate([
             'name' => 'required',
             'email' => 'required',
-            'birthday' => '',
-            'company' => '',
+            'birthday' => 'required',
+            'company' => 'required',
         ]);
         Contact::create($data);
     }
