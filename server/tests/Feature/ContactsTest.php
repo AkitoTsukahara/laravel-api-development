@@ -119,6 +119,35 @@ class ContactsTest extends TestCase
         $this->assertCount(0,Contact::all());
     }
 
+    /**
+     * @test
+     */
+    public function a_contact_can_be_patched(){
+
+        $this->withoutExceptionHandling();
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->patch('/api/contacts/' . $contact->id, $this->data());
+        $contact = $contact->fresh();
+
+        $this->assertEquals('Test Name',$contact->name);
+        $this->assertEquals('test@email.com',$contact->email);
+        $this->assertEquals('2000-01-01',$contact->birthday->format('Y-m-d'));
+        $this->assertEquals('ABC String',$contact->company);
+
+    }
+
+    /**
+     * @test
+     */
+    public function a_contact_can_be_deleted(){
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->delete('/api/contacts/' . $contact->id);
+
+        $this->assertCount(0,Contact::all());
+    }
+
     private function data(){
         return [
             'name' => 'Test Name',
