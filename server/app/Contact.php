@@ -18,4 +18,8 @@ class Contact extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function path(){
+        return url('/contacts/' . $this->id);
+    }
 }

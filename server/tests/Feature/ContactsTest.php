@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Contact;
 use Carbon\Carbon;
 use App\User;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,7 +39,11 @@ class ContactsTest extends TestCase
         $response->assertJsonCount(1)
         ->assertJson([
             'data' => [
-                [ 'contact_id' => $contact->id ]
+                [
+                    'data' => [
+                        'contact_id' => $contact->id,
+                    ]
+                ]
             ]
         ]);
     }
@@ -62,7 +67,7 @@ class ContactsTest extends TestCase
     {
         //$this->withoutExceptionHandling();
         //$user = factory(User::class)->create();
-        $this->post('/api/contacts', $this->data());
+        $response = $this->post('/api/contacts', $this->data());
 
         $contact = Contact::first();
 
@@ -71,6 +76,15 @@ class ContactsTest extends TestCase
         $this->assertEquals('test@email.com',$contact->email);
         $this->assertEquals('2000-01-01',$contact->birthday->format('Y-m-d'));
         $this->assertEquals('ABC String',$contact->company);
+        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertJson([
+            'data' => [
+                'contact_id' => $contact->id,
+            ],
+            'links' => [
+                'self' => $contact->path(),
+            ]
+        ]);
     }
 
     /**
@@ -194,6 +208,16 @@ class ContactsTest extends TestCase
         $this->assertEquals('2000-01-01',$contact->birthday->format('Y-m-d'));
         $this->assertEquals('ABC String',$contact->company);
 
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson([
+            'data' => [
+                'contact_id' => $contact->id,
+            ],
+            'links' => [
+                'self' => $contact->path(),
+            ]
+        ]);
+
     }
 
     /**
@@ -208,7 +232,6 @@ class ContactsTest extends TestCase
         );
 
         $response->assertStatus(403);
-
     }
 
     /**
@@ -220,6 +243,8 @@ class ContactsTest extends TestCase
         $response = $this->delete('/api/contacts/' . $contact->id,['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,Contact::all());
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     /**
