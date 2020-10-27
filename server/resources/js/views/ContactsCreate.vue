@@ -1,10 +1,10 @@
 <template>
     <div>
-        <form>
-            <InputField name="name" label="Conatct Name" placeholder="Contact Name" @update:field="form.name = $event" />
-            <InputField name="email" label="Contact Email" placeholder="Contact Email" @update:field="form.email = $event"/>
-            <InputField name="company" label="Company" placeholder="Company" @update:field="form.companay = $event"/>
-            <InputField name="birthday" label="Birthday" placeholder="YYYY/MM/DD" @update:field="form.birthday = $event"/>
+        <form @submit.prevent="submitForm">
+            <InputField name="name" label="Conatct Name" :errors="errors" placeholder="Contact Name" @update:field="form.name = $event"/>
+            <InputField name="email" label="Contact Email" :errors="errors" placeholder="Contact Email" @update:field="form.email = $event"/>
+            <InputField name="company" label="Company" :errors="errors" placeholder="Company" @update:field="form.company = $event"/>
+            <InputField name="birthday" label="Birthday" :errors="errors" placeholder="YYYY/MM/DD" @update:field="form.birthday = $event"/>
 
             <div class="flex justify-end">
                 <button class="py-2 px-4 rounded text-red-700 border mr-5 hover:border-red-700">Cancel</button>
@@ -19,10 +19,7 @@
     import InputField from "../components/InputField";
     export default {
         name: "ContactsCreate",
-        components: {InputField},
-        comments: [
-            InputField
-        ],
+        components: { InputField },
         data: function () {
             return {
                 form: {
@@ -30,7 +27,21 @@
                     'email': '',
                     'company': '',
                     'birthday': '',
-                }
+                },
+
+                errors: null,
+            }
+        },
+
+        methods: {
+            submitForm: function(){
+                axios.post('/api/contacts',this.form)
+                    .then(response => {
+
+                    })
+                    .catch(errors => {
+                        this.errors = errors.response.data.errors;
+                    });
             }
         }
     }
