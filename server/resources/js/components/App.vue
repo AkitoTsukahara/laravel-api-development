@@ -39,12 +39,11 @@
             <div class="flex flex-col flex-1 h-screen overflow-y-hidden">
                 <div class="h-16 px-6 border-b border-gray-400 flex items-center justify-between">
                     <div>
-<!--                        {{ title }}-->
+
                     </div>
 
                     <div class="flex items-center">
-<!--                        <SearchBar />-->
-<!--                        <UserCircle :name="user.name" />-->
+                        <UserCircle :name="user.name" />
                     </div>
                 </div>
 
@@ -58,6 +57,8 @@
 </template>
 
 <script>
+    import UserCircle from "./UserCircle";
+
     export default {
         name: "App",
 
@@ -65,9 +66,16 @@
             'user'
         ],
 
-        mounted() {
+        components: {
+            UserCircle
+        },
+
+        created() {
             window.axios.interceptors.request.use(
                 (config) => {
+                    if(config.method === 'get') {
+                        config.url = config.url + '?api_token=' + this.user.api_token;
+                    }
                     config.data = {
                         ...config.data,
                         api_token: this.user.api_token
